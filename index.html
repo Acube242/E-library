@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eLibrary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        #search-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        #search-bar {
+            padding: 10px;
+            width: 60%;
+            font-size: 16px;
+            max-width: 500px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .book-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px;
+        }
+        .book-item {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: box-shadow 0.3s;
+        }
+        .book-item:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .book-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .book-item h3 {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+        .book-item p {
+            color: gray;
+            font-size: 14px;
+        }
+        .book-details {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            margin: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .book-details h2 {
+            margin-bottom: 10px;
+        }
+        .close-btn {
+            background-color: #ff3b30;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .close-btn:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to eLibrary</h1>
+        <p>Your digital book collection</p>
+    </header>
+
+    <div id="search-container">
+        <input type="text" id="search-bar" placeholder="Search books..." onkeyup="searchBooks()" aria-label="Search books">
+    </div>
+
+    <div class="book-list" id="book-list">
+        <!-- Books will be displayed here dynamically -->
+    </div>
+
+    <div id="book-details" class="book-details">
+        <button class="close-btn" onclick="closeDetails()" aria-label="Close details">Close</button>
+        <h2 id="book-title"></h2>
+        <p id="book-description"></p>
+    </div>
+
+    <script>
+        // Sample data for books with 10 books
+        const books = [
+            { id: 1, title: "JavaScript: The Good Parts", author: "Douglas Crockford", description: "A deep dive into JavaScript's core features.", img: "images001.jpeg" },
+            { id: 2, title: "HTML & CSS: Design and Build Websites", author: "Jon Duckett", description: "A beginner-friendly guide to HTML and CSS.", img: "images002.jpeg" },
+            { id: 3, title: "Learning Python", author: "Mark Lutz", description: "Comprehensive guide to Python programming.", img: "images003.jpeg" },
+            { id: 4, title: "Eloquent JavaScript", author: "Marijn Haverbeke", description: "A modern introduction to programming using JavaScript.", img: "images004.jpeg" },
+            { id: 5, title: "Clean Code", author: "Robert C. Martin", description: "A guide to writing clean, maintainable code.", img: "images005.jpg" },
+            { id: 6, title: "Design Patterns", author: "Erich Gamma", description: "Creational, structural, and behavioral design patterns.", img: "images006.jpeg" },
+            { id: 7, title: "The Pragmatic Programmer", author: "Andrew Hunt", description: "Tips and techniques for improving your coding skills.", img: "images007.jpeg" },
+            { id: 8, title: "The Clean Coder", author: "Robert C. Martin", description: "A guide to professional software development practices.", img: "images008.jpeg" },
+            { id: 9, title: "Refactoring", author: "Martin Fowler", description: "Improving the design of existing code.", img: "images009.jpeg" },
+            { id: 10, title: "The Art of Computer Programming", author: "Donald E. Knuth", description: "The fundamental algorithms that form the backbone of computing.", img: "images010.jpeg" },
+            // Add more books as necessary...
+        ];
+
+        // Function to render the books
+        function displayBooks(books) {
+            const bookList = document.getElementById('book-list');
+            bookList.innerHTML = '';  // Clear previous list
+            books.forEach(book => {
+                const bookItem = document.createElement('div');
+                bookItem.classList.add('book-item');
+                bookItem.onclick = () => showDetails(book);
+
+                // Create elements for the book item
+                const img = document.createElement('img');
+                img.src = book.img;
+                img.alt = book.title;
+
+                const title = document.createElement('h3');
+                title.textContent = book.title;
+
+                const author = document.createElement('p');
+                author.textContent = book.author;
+
+                // Append elements to book item
+                bookItem.appendChild(img);
+                bookItem.appendChild(title);
+                bookItem.appendChild(author);
+
+                // Append book item to book list
+                bookList.appendChild(bookItem);
+            });
+        }
+
+        // Function to show book details
+        function showDetails(book) {
+            document.getElementById('book-title').textContent = book.title;
+            document.getElementById('book-description').textContent = book.description;
+            document.getElementById('book-details').style.display = 'block';
+        }
+
+        // Function to close book details
+        function closeDetails() {
+            document.getElementById('book-details').style.display = 'none';
+        }
+
+        // Function to filter books based on search input
+        function searchBooks() {
+            const searchQuery = document.getElementById('search-bar').value.toLowerCase();
+            const filteredBooks = books.filter(book => book.title.toLowerCase().includes(searchQuery));
+            displayBooks(filteredBooks);
+        }
+
+        // Initially display all books
+        displayBooks(books);
+    </script>
+</body>
+</html>
